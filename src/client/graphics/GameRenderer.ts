@@ -25,6 +25,8 @@ import { MultiTabModal } from "./layers/MultiTabModal";
 import { NameLayer } from "./layers/NameLayer";
 import { PlayerInfoOverlay } from "./layers/PlayerInfoOverlay";
 import { PlayerPanel } from "./layers/PlayerPanel";
+import { QuickBuildHandler } from "./layers/QuickBuildHandler";
+import { QuickBuildMenu } from "./layers/QuickBuildMenu";
 import { RailroadLayer } from "./layers/RailroadLayer";
 import { ReplayPanel } from "./layers/ReplayPanel";
 import { SpawnAd } from "./layers/SpawnAd";
@@ -226,6 +228,24 @@ export function createRenderer(
   }
   alertFrame.game = game;
 
+  const quickBuildMenu = document.querySelector(
+    "quickbuild-menu",
+  ) as QuickBuildMenu;
+  if (!(quickBuildMenu instanceof QuickBuildMenu)) {
+    console.error("quickbuild menu not found");
+  } else {
+    console.log("QuickBuildMenu found and configured");
+  }
+  quickBuildMenu.game = game;
+  quickBuildMenu.eventBus = eventBus;
+
+  // Create quickbuild handler (not a DOM element, just a handler)
+  const quickBuildHandler = new QuickBuildHandler(
+    game,
+    eventBus,
+    transformHandler,
+  );
+
   const layers: Layer[] = [
     new TerrainLayer(game, transformHandler),
     new TerritoryLayer(game, eventBus, transformHandler, userSettings),
@@ -253,6 +273,8 @@ export function createRenderer(
     gameLeftSidebar,
     gameTopBar,
     gameRightSidebar,
+    quickBuildMenu,
+    quickBuildHandler,
     controlPanel,
     playerInfo,
     winModal,
